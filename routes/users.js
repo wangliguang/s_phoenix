@@ -10,7 +10,7 @@ const BUNDLE_BASE = '/app/s_phoenix/public/bundle/';
 router.get('/getPatch', async function(req, res, next) {
   try {
     const { currentBundleVersion } = req.query;
-    let cmdStr = `pwd && cd ${BUNDLE_BASE} && ls -t * | head -1`
+    let cmdStr = `cd ${BUNDLE_BASE} && ls -t * | head -1`
     
     const latestBundle = await CMDPromise(cmdStr);
     if(currentBundleVersion == 0) {
