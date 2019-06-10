@@ -1,6 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var { CMDPromise } = require('./tools');
+var log4js = require('log4js');
+
+
+
+log4js.configure({
+  appenders: { cheese: { type: 'file', filename: 'cheese.log' } },
+  categories: { default: { appenders: ['cheese'], level: 'error' } }
+});
+const logger = log4js.getLogger('cheese');
 
 
 const BUNDLE_URL_PREFIX = 'http://47.94.81.19:3000/bundle/';
@@ -30,6 +39,7 @@ router.get('/getPatch', async function(req, res, next) {
       version: latestBundle.split('.')[0],
     });
   } catch (error) {
+    logger.error(error);
     res.json(error);
   }
 
