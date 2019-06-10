@@ -22,10 +22,10 @@ router.get('/getPatch', async function(req, res, next) {
       return;
     }
 
-    await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ${PATCH_BASE}diff.patch`);
+    await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ${PATCH_BASE}diff.pat`);
     res.json({
       code: 200,
-      patchUrl: `${PATCH_URL_PREFIX}diff.patch`
+      patchUrl: `${PATCH_URL_PREFIX}diff.pat`
     });
   } catch (error) {
     res.json(error);
