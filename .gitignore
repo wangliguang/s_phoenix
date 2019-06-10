@@ -19,6 +19,8 @@ package-lock.json
 yarn.lock
 *.log
 *.gz
+./public/bundle/.*
+./public/patch/.*
 
 
 # Coveralls
