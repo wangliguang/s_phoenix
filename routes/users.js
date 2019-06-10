@@ -18,6 +18,7 @@ router.get('/getPatch', async function(req, res, next) {
       res.json({ 
         bundleUrl: `${BUNDLE_URL_PREFIX}${latestBundle}`,
         code: 200,
+        version: latestBundle.split('.')[0],
       });
       return;
     }
@@ -25,7 +26,8 @@ router.get('/getPatch', async function(req, res, next) {
     await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ${PATCH_BASE}diff.pat`);
     res.json({
       code: 200,
-      patchUrl: `${PATCH_URL_PREFIX}diff.pat`
+      patchUrl: `${PATCH_URL_PREFIX}diff.pat`,
+      version: latestBundle.split('.')[0],
     });
   } catch (error) {
     res.json(error);
