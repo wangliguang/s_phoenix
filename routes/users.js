@@ -6,6 +6,7 @@ var { CMDPromise } = require('./tools');
 const BUNDLE_URL_PREFIX = 'http://47.94.81.19:3000/bundle/';
 const PATCH_URL_PREFIX = 'http://47.94.81.19:3000/patch/';
 const BUNDLE_BASE = '/app/s_phoenix/public/bundle/';
+const PATCH_BASE = '/app/s_phoenix/public/patch/';
 
 router.get('/getPatch', async function(req, res, next) {
   try {
@@ -21,7 +22,7 @@ router.get('/getPatch', async function(req, res, next) {
       return;
     }
 
-    await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ./public/patch/diff.patch`);
+    await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ${PATCH_BASE}diff.patch`);
     res.json({
       code: 200,
       patchUrl: `${PATCH_URL_PREFIX}diff.patch`
