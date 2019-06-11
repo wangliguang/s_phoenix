@@ -2,13 +2,19 @@ var express = require('express');
 var router = express.Router();
 var { CMDPromise } = require('./tools');
 var { logger } = require('./logs');
-
+var DMP = require('./diff_match_patch_uncompressed');
+var rf=require("fs");
 
 
 const BUNDLE_URL_PREFIX = 'http://47.94.81.19:3000/bundle/';
 const PATCH_URL_PREFIX = 'http://47.94.81.19:3000/patch/';
 const BUNDLE_BASE = '/app/s_phoenix/public/bundle/';
 const PATCH_BASE = '/app/s_phoenix/public/patch/';
+
+// const BUNDLE_BASE = '/Users/wangliguang/Desktop/phoenix/s_phoenix/public/bundle/';
+// const PATCH_BASE = '/Users/wangliguang/Desktop/phoenix/s_phoenix/public/patch/';
+// const BUNDLE_URL_PREFIX = 'http://10.36.36.31:3000/bundle/';
+// const PATCH_URL_PREFIX = 'http://10.36.36.31:3000/patch/';
 
 router.get('/getPatch', async function(req, res, next) {
   try {
@@ -24,8 +30,22 @@ router.get('/getPatch', async function(req, res, next) {
       });
       return;
     }
+    
+    var currentBundleVersionData = rf.readFileSync(`${BUNDLE_BASE}${currentBundleVersion}.bundle`,"utf-8");
+    var latestBundleData = rf.readFileSync(`${BUNDLE_BASE}${latestBundle}`,"utf-8");
 
-    await CMDPromise(`diff ${BUNDLE_BASE}${currentBundleVersion}.bundle ${BUNDLE_BASE}${latestBundle} > ${PATCH_BASE}diff.pat`);
+    var dmp = new DMP.diff_match_patch();
+    var diff = dmp.diff_main(currentBundleVersionData, latestBundleData, true);
+      
+    if (diff.length > 2) {
+      dmp.diff_cleanupSemantic(diff);
+    }
+    
+    var patch_list = dmp.patch_make(currentBundleVersionData, latestBundleData, diff);
+    const patch_text = dmp.patch_toText(patch_list);
+
+    rf.writeFileSync(`${PATCH_BASE}diff.pat`, patch_text);
+
     res.json({
       code: 200,
       patchUrl: `${PATCH_URL_PREFIX}diff.pat`,
